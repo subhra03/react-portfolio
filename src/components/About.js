@@ -3,8 +3,8 @@ import '../App.css';
 
 const About = () => {
   return (
-    <section className="about-section" id="about" data-aos="fade-up">
-      <h2>ABOUT ME</h2>
+    <section className="about-section" id="about" data-aos="fade-up" aria-labelledby="about-title">
+      <h2 id="about-title">About Me</h2>
       <p className="about-description">
         I'm a passionate Frontend Developer specializing in HTML, CSS, JavaScript, and React. I focus on creating fast, responsive, and user-friendly web experiences.
       </p>

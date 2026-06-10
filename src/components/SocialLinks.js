@@ -1,34 +1,32 @@
 import React from 'react';
-import { FaGithub, FaLinkedin, FaInstagram, FaEnvelope, FaFacebook, FaTwitter, FaYoutube } from 'react-icons/fa'; // Add these imports
+import { FaGithub, FaLinkedin, FaInstagram, FaEnvelope, FaFacebook, FaTwitter, FaYoutube } from 'react-icons/fa';
 import '../App.css';
 
-const SocialLinks = () => {
-  return (
-<div className="social-links">
-        <a href="mailto:subhramoy03@gmail.com" className="social-link" aria-label="Email">
-          <FaEnvelope size={24} />
-        </a>
-        <a href="https://www.facebook.com/share/14nnXLjsQT/" className="social-link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-          <FaFacebook size={24} />
-        </a>
-        <a href="https://x.com/_Subhra_?t=nqgr3rA9jchbLufsed7obA&s=08" className="social-link" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-          <FaTwitter size={24} />
-        </a>
-        <a href="https://youtube.com/@subhramoy-03?si=djr8I1rVZaC6ysdJ" className="social-link" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-          <FaYoutube size={24} />
-        </a>
-        <a href="https://www.linkedin.com/in/subhramoy-bhowmik-8b6944242?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" 
-           className="social-link" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-          <FaLinkedin size={24} />
-        </a>
-        <a href="https://github.com/subhra03" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="GitHub">
-          <FaGithub size={24} />
-        </a>
-        <a href="https://www.instagram.com/__subhramoy__/?igsh=MTBnZzZ1N3Rmb3poNw%3D%3D#" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">
-          <FaInstagram size={24} />
-        </a>
-      </div>
-  );
-};
+const links = [
+  { label: 'Email', href: 'mailto:subhramoy03@gmail.com', Icon: FaEnvelope },
+  { label: 'Facebook', href: 'https://www.facebook.com/share/14nnXLjsQT/', Icon: FaFacebook },
+  { label: 'Twitter', href: 'https://x.com/_Subhra_?t=nqgr3rA9jchbLufsed7obA&s=08', Icon: FaTwitter },
+  { label: 'YouTube', href: 'https://youtube.com/@subhramoy-03?si=djr8I1rVZaC6ysdJ', Icon: FaYoutube },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/subhramoy-bhowmik-8b6944242', Icon: FaLinkedin },
+  { label: 'GitHub', href: 'https://github.com/subhra03', Icon: FaGithub },
+  { label: 'Instagram', href: 'https://www.instagram.com/__subhramoy__/', Icon: FaInstagram },
+];
+
+const SocialLinks = () => (
+  <nav className="social-links" aria-label="Social links">
+    {links.map(({ label, href, Icon }) => (
+      <a
+        key={label}
+        href={href}
+        className="social-link"
+        target={href.startsWith('mailto:') ? undefined : '_blank'}
+        rel={href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+        aria-label={label}
+      >
+        <Icon size={24} aria-hidden="true" />
+      </a>
+    ))}
+  </nav>
+);
 
 export default SocialLinks;
