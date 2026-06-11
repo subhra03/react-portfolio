@@ -2,18 +2,59 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaGithub, FaLinkedin, FaTimes } from 'react-icons/fa';
 import '../App.css';
 
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/movdqbyd';
+
 const ContactModal = ({ isOpen, onClose = () => {} }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: '',
   });
+  const [submitStatus, setSubmitStatus] = useState('idle');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
   const firstFieldRef = useRef(null);
   const modalRef = useRef(null);
   const previousFocusRef = useRef(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    if (submitStatus !== 'submitting') {
+      setSubmitStatus('idle');
+      setFeedbackMessage('');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setSubmitStatus('submitting');
+    setFeedbackMessage('');
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        const formspreeMessage = data?.errors?.[0]?.message;
+        throw new Error(formspreeMessage || 'Unable to send your message right now.');
+      }
+
+      setFormData({ name: '', email: '', message: '' });
+      setSubmitStatus('success');
+      setFeedbackMessage('Thanks. Your message has been sent.');
+      firstFieldRef.current?.focus();
+    } catch (error) {
+      setSubmitStatus('error');
+      setFeedbackMessage(error.message || 'Something went wrong. Please try again.');
+    }
   };
 
   useEffect(() => {
@@ -61,7 +102,16 @@ const ContactModal = ({ isOpen, onClose = () => {} }) => {
     };
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (isOpen) return;
+
+    setSubmitStatus('idle');
+    setFeedbackMessage('');
+  }, [isOpen]);
+
   if (!isOpen) return null;
+
+  const isSubmitting = submitStatus === 'submitting';
 
   return (
     <div className="modal-overlay">
@@ -78,8 +128,7 @@ const ContactModal = ({ isOpen, onClose = () => {} }) => {
         <h2 id="contact-modal-title">Contact Me</h2>
         <form
           className="contact-form"
-          action="https://formspree.io/f/movdqbyd"
-          method="POST"
+          onSubmit={handleSubmit}
         >
           <div className="form-field">
             <label htmlFor="contact-name">Name</label>
@@ -92,6 +141,7 @@ const ContactModal = ({ isOpen, onClose = () => {} }) => {
               onChange={handleChange}
               autoComplete="name"
               ref={firstFieldRef}
+              disabled={isSubmitting}
               required
             />
           </div>
@@ -105,6 +155,7 @@ const ContactModal = ({ isOpen, onClose = () => {} }) => {
               value={formData.email}
               onChange={handleChange}
               autoComplete="email"
+              disabled={isSubmitting}
               required
             />
           </div>
@@ -117,10 +168,18 @@ const ContactModal = ({ isOpen, onClose = () => {} }) => {
               rows="4"
               value={formData.message}
               onChange={handleChange}
+              disabled={isSubmitting}
               required
             ></textarea>
           </div>
-          <button type="submit">Send Message</button>
+          {feedbackMessage && (
+            <p className={`form-feedback form-feedback-${submitStatus}`} role="status" aria-live="polite">
+              {feedbackMessage}
+            </p>
+          )}
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Sending...' : 'Send Message'}
+          </button>
         </form>
         <div className="contact-socials">
           <a href="https://github.com/subhra03" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><FaGithub /></a>

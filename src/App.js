@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Header from './components/Header';
 import Hero from './components/Hero';
 import SocialLinks from './components/SocialLinks';
 import About from './components/About';
@@ -29,7 +28,6 @@ function App() {
   return (
     <div className="App">
       <a className="skip-link" href="#main-content">Skip to content</a>
-      <Header onContactClick={() => setShowContactModal(true)} />
       <SocialLinks />
       <main id="main-content">
         <Hero onContactClick={() => setShowContactModal(true)} />
